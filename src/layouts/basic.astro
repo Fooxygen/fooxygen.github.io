@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Header from '../components/header.astro';
+import Profile from '../components/profile.astro';
 
 interface Props {
     title?: string;
@@ -18,12 +19,65 @@ const {
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <title>{title}</title>
-        <script is:inline>
-            document.documentElement.dataset.theme = localStorage.getItem('theme') ?? 'dark';
-        </script>
     </head>
     <body>
-        <Header />
-        <slot />
+        <Header/>
+        <section class="banner"></section>
+        <main>
+            <div class="container">
+                <div class="banner_detail text_tag">
+                    <a  class="text_btn"
+                        href="https://www.pixiv.net/artworks/106667556"
+                       title="在 Pixiv 中打开该作品">Kugigigi | ぼっち電車</a>
+                </div>
+                <div class="columns">
+                    <Profile/>
+                </div>
+            </div>
+        </main>
     </body>
 </html>
+
+<style>
+    main {
+        width: 100%;
+        height: 2vh;
+        position: relative;
+        margin-top: -5.5rem;
+    }
+
+    .container {
+        width: var(--content_width);
+        margin: 0 auto;
+    }
+
+    .banner {
+		background: url('/images/banner.jpg') bottom / cover;
+		width: 100%;
+		aspect-ratio: 2.85 / 1;
+
+        animation: banner-blur linear both;
+        animation-timeline: scroll();
+        animation-range: 0vh 40vh;
+	}
+    .banner_detail {
+        width: fit-content;
+        margin-left: auto;
+        background: color-mix(in srgb, var(--foreground) 80%, transparent);
+        padding: 0.2rem 0.7rem;
+        border-radius: var(--radius);
+
+        animation: banner-blur linear both;
+        animation-timeline: scroll();
+        animation-range: 0vh 40vh;
+    }
+    @keyframes banner-blur {
+        to { filter: blur(3px); }
+    }
+
+    .columns {
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+    }
+
+</style>

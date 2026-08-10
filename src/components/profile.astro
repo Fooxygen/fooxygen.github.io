@@ -1,0 +1,57 @@
+---
+import { profile } from '../config';
+import '../styles/global.css';
+---
+
+<aside>
+    <img src={profile.avatar} class="avatar">
+    <div class="text_label name">Fooxygen</div>
+    <div class="detail">
+        <h1>Hello</h1>
+        <h2>Hello</h2>
+        <h3>Hello</h3>
+        <h4>Hello</h4>
+        <h1>Hello</h1>
+        <h2>Hello</h2>
+        <h3>Hello</h3>
+        <h4>Hello</h4>
+        <h1>Hello</h1>
+        <h2>Hello</h2>
+        <h3>Hello</h3>
+        <h4>Hello</h4>
+        <h1>Hello</h1>
+        <h2>Hello</h2>
+        <h3>Hello</h3>
+        <h4>Hello</h4>
+    </div>
+</aside>
+    
+<style>
+    aside {
+        padding: 0.5rem;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .avatar {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1;
+        background: var(--foreground);
+        border-radius: 50%;
+        padding: 0.5rem;
+    }
+
+    .name {
+        padding-bottom: 0.5rem;
+    }
+
+    .detail {
+        width: 100%;
+        border-radius: var(--radius);
+        background: var(--foreground);
+        padding: 1.2rem;
+    }
+</style>

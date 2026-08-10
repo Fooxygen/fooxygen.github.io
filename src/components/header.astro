@@ -1,49 +1,67 @@
 ---
+import { Icon}  from 'astro-icon/components';
 ---
 
 <header>
     <nav>
-        <div><a href="/" class="btn brand">Fooxygen's Space</a></div>
         <div class="container">
-            <a href="/" class="btn">Home</a>
-        </div>
-        <div class="container">
-            <a href="https://github.com/Fooxygen">
-                <img src="/icons/github.svg" alt="Github" class="container_external">
-            </a>
+            <div><a href="/" class="btn brand">Fooxygen's Space</a></div>
+            <div class="group">
+                <a href="/" class="btn text_btn">Home</a>
+            </div>
+            <div class="group">
+                <a href="https://github.com/Fooxygen" class="group_external_elem">
+                    <Icon name="simple-icons:github" class="icon" />
+                </a>
+            </div>
         </div>
     </nav>
 </header>
 
 <style>
     nav {
+        z-index: 9999;
         position: fixed;
         top: 0;
         left: 50%;
-        transform: translateX(-50%);
-        width: 67vw;
-        height: 6vh;
-        padding: 0.5rem 3rem 0.6rem 3rem;
-        border-radius: 0 0 1.25rem 1.25rem;
+        transform: translateX(-50%, 0);
+        width: var(--content_width);
+        padding: 1rem 1.6rem;
 
-        background: var(--bg);
+        background: var(--background);
+        border-radius: var(--radius_bottom);
+
+        animation: header-hide ease both;
+        animation-timeline: scroll();
+        animation-range: 40vh 60vh;
+    }
+    @keyframes header-hide {
+        from { transform: translate(-50%, 0); }
+        to   { transform: translate(-50%, -120%); }
+    }
+
+    .container {
+        width: 90%;
+        height: 100%;
+        
+        margin: 0 auto;
         display: grid;
         grid-template-columns: auto 1fr auto;
         align-items: center;
         gap: 1rem;
     }
 
-    .container {
+    .group {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
     }
 
-    .container_external {
-        display: block;
-        height: 1.75rem;
-        width: auto;
+    .group_external_elem {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .brand {
