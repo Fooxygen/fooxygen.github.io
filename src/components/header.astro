@@ -5,9 +5,9 @@ import { Icon }  from 'astro-icon/components';
 <header>
     <nav>
         <div class="container">
-            <div><a href="/" class="btn brand">Fooxygen's Space</a></div>
+            <div><a href="/" class="btn text_label brand">Fooxygen's Space</a></div>
             <div class="group">
-                <a href="/" class="btn text_btn">Home</a>
+                <a href="/" class="btn text_label">Home</a>
             </div>
             <div class="group">
                 <a href="https://github.com/Fooxygen" class="group_external_elem">
@@ -31,13 +31,12 @@ import { Icon }  from 'astro-icon/components';
         background: var(--background);
         border-radius: var(--radius_bottom);
 
-        animation: header-hide ease both;
-        animation-timeline: scroll();
-        animation-range: 40vh 60vh;
+        transform: translate(-50%, 0);
+        transition: transform 0.3s ease;
     }
-    @keyframes header-hide {
-        from { transform: translate(-50%, 0); }
-        to   { transform: translate(-50%, -120%); }
+    nav.hidden {
+        transition: transform 0.15s ease;
+        transform: translate(-50%, -120%);
     }
 
     .container {
@@ -68,3 +67,14 @@ import { Icon }  from 'astro-icon/components';
         color: var(--brand);
     }
 </style>
+
+<script>
+    const dist = 75;
+    const n = document.querySelector('nav')!;
+    let lastY = scrollY;
+    addEventListener('scroll', () => {
+        const y = scrollY;
+        n.classList.toggle('hidden', y >= dist && y > lastY);
+        lastY = y;
+    }, { passive: true });
+</script>

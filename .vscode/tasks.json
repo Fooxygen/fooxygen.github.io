@@ -6,6 +6,18 @@
 			"type": "npm",
 			"script": "dev",
 			"problemMatcher": []
+		},
+		{
+			"label": "Run Build",
+			"type": "npm",
+			"script": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Run Preview",
+			"type": "npm",
+			"script": "preview",
+			"problemMatcher": []
 		}
 	]
 }
