@@ -3,6 +3,7 @@
     --background: #090e13;
     --foreground: #181e24;
     --brand:      #43b8fc;
+    --brand_dark: #1ca0f866;
     --text:       #f0f6fc;
     --text_tag:   #c2c4c6;
 
@@ -24,6 +25,10 @@
 }
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5);
+}
+
+::selection {
+    background: var(--brand_dark);
 }
 
 *, *::before, *::after {
