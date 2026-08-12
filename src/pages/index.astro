@@ -1,8 +1,19 @@
 ---
+import { getEntry, render } from 'astro:content';
 import Layout from '../layouts/basic.astro';
+
+const about = await getEntry('pages', 'about')!;
+const { Content } = await render(about);
+const { title } = about.data;
 ---
 
 <Layout title='Home'>
+    <article class="markdown-body">
+        <header class="meta">
+            <h1 class="maintitle">{title}</h1>
+        </header>
+        <Content/>
+    </article>
 </Layout>
 
 <style>

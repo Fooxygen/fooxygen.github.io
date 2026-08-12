@@ -10,7 +10,7 @@ const blogs = (await getCollection('blogs'))
 <blogs>
     <div class="lists_column">
         {blogs.map((blog) => (
-            <a class="card" href={`/blog/${blog.id}/`}>
+            <a class="card" href={`/blogs/${blog.id}/`}>
                 <maintitle>{blog.data.title}</maintitle>
                 <div class="lists_row">
                     <span class="text_label_thin textcolor_tag">

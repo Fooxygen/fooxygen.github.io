@@ -19,7 +19,7 @@ const { title, date, tags = [] } = blog.data;
     <article class="markdown-body">
         <header class="meta">
             <h1 class="maintitle">{title}</h1>
-            <div class="lists_row">
+            <div class="lists_row infos">
                 {tags.map((tag) => <span class="tag">{tag}</span>)}
                 <div class="text_label">最后编辑于 {date.toLocaleDateString('en-CA')}</div>
             </div>
@@ -27,3 +27,9 @@ const { title, date, tags = [] } = blog.data;
         <Content/>
     </article>
 </Layout>
+
+<style>
+    .infos {
+        padding-bottom: 1rem;
+    }
+</style>
