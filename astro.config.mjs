@@ -1,7 +1,7 @@
 
-import { defineConfig } from 'astro/config';
-import icon from 'astro-icon';
-import { unified } from '@astrojs/markdown-remark';
+import { defineConfig }       from 'astro/config';
+import icon                   from 'astro-icon';
+import { unified }            from '@astrojs/markdown-remark';
 import { rehypeGithubAlerts } from 'rehype-github-alerts';
 
 export default defineConfig({

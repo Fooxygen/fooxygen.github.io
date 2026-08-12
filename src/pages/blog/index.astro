@@ -1,0 +1,105 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/basic.astro';
+
+const posts = (await getCollection('blog'))
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<Layout title="Blog">
+<blogs>
+    <div class="lists_column">
+        {posts.map((post) => (
+            <a class="card" href={`/blog/${post.id}/`}>
+                <maintitle>{post.data.title}</maintitle>
+                <div class="lists_row">
+                    <span class="text_label_thin textcolor_tag">
+                        {post.data.date.toLocaleDateString('en-CA')
+                    }</span>
+                    {(post.data.tags ?? []).map((tag) => <span class="tag">{tag}</span>)}
+                </div>
+            </a>
+        ))}
+    </div>
+
+    {posts.length > 0 && (
+        <nav class="lists_row">
+            <button class="btn_circle" data-page="first">⯇⯇</button>
+            <button class="btn_circle" data-page="prev">⯇</button>
+            <div    class="lists_row" id="page_idxs"></div>
+            <button class="btn_circle" data-page="next">⯈</button>
+            <button class="btn_circle" data-page="last">⯈⯈</button>
+        </nav>
+    )}
+</blogs>
+</Layout>
+
+<script>
+    const CARDS_PER_PAGE = 5;
+
+    const pages       = document.getElementById('page_idxs')!;
+    const cards       = Array.from(document.querySelectorAll<HTMLElement>('.card'));
+    const buttons     = Array.from(document.querySelectorAll<HTMLButtonElement>('.btn_circle'));
+    const total_pages = Math.ceil(cards.length / CARDS_PER_PAGE);
+    let current = 0;
+
+    function render() {
+        cards.forEach((card, i) => {
+            card.style.display = Math.floor(i / CARDS_PER_PAGE) === current ? '' : 'none';
+        });
+        pages.innerHTML = Array.from({ length: total_pages }, (_, i) =>
+            `<button class="btn_circle btn_page ${current === i ? 'active' : ''}" data-index="${i}">${i + 1}</button>`
+        ).join('');
+        document.querySelectorAll<HTMLButtonElement>('[data-page="first"], [data-page="prev"]')
+            .forEach((b) => (b.disabled = current === 0));
+        document.querySelectorAll<HTMLButtonElement>('[data-page="next"], [data-page="last"]')
+            .forEach((b) => (b.disabled = current === total_pages - 1));
+    }
+
+    pages.addEventListener('click', (e) => {
+        const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.btn_page');
+        if (!btn) return;
+        current = Number(btn.dataset.index);
+        render();
+    });
+
+    buttons.forEach((b) =>
+        b.addEventListener('click', () => {
+            if      (b.dataset.page === 'first') current = 0;
+            else if (b.dataset.page === 'prev')  current = Math.max(0, current - 1);
+            else if (b.dataset.page === 'next')  current = Math.min(total_pages - 1, current + 1);
+            else if (b.dataset.page === 'last')  current = total_pages - 1;
+            render();
+        })
+    );
+
+    render();
+</script>
+
+<style>
+    blogs {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .card {
+        display: block;
+        padding: 1.2rem;
+        background: var(--foreground);
+        border-radius: var(--radius);
+        border: 1px solid transparent;
+        transition: border-color 0.2s ease;
+    }
+    .card:hover { border-color: var(--brand); }
+    
+    .card maintitle {
+        display: block;
+        margin: 0 0 0.4rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text);
+    }
+</style>

@@ -45,8 +45,62 @@ body {
     background: var(--background);
 }
 
+/*  Grid  */
+.lists_row {
+    display: flex;
+    flex-direction: row;
+    gap: 0.6rem;
+    justify-items: center;
+    align-items: center;
+}
+.lists_column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    justify-items: center;
+    align-items: center;
+}
+
+.tag {
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.4rem 0.7rem;
+
+    color: var(--text_tag);
+    background: color-mix(in srgb, var(--foreground) 60%, transparent);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 6px rgba(36, 50, 62, 0.4);
+}
+
 /*  Button  */
-.btn:hover {
+.btn_circle {
+    width: 2rem;
+    aspect-ratio: 1;
+    border: none;
+    border-radius: 50%;
+    background: var(--foreground);
+
+    color: var(--text);
+    font-size: 20px;
+
+    transition: background 0.2s ease;
+}
+.btn_circle.active {
+    border: 2px solid var(--brand);
+}
+.btn_circle:hover {
+    cursor: pointer;
+    background: var(--brand);
+}
+.btn_circle:disabled {
+    opacity: 0.25;
+}
+
+.btn_label {
+    transition: color 0.2s ease;
+}
+.btn_label:hover {
+    cursor: pointer;
     color: var(--brand);
 }
 
@@ -64,7 +118,7 @@ h4 { color: var(--text); font-size: 1.125rem; font-weight: 600; line-height: 1.5
 }
 .text_label_thick {
     color: var(--text);
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     line-height: 2.0;
 }
@@ -72,34 +126,18 @@ h4 { color: var(--text); font-size: 1.125rem; font-weight: 600; line-height: 1.5
     color: var(--text);
     font-size: 0.8rem;
     font-weight: 500;
-    transition: color 0.2s ease;
 }
 .text_label_thin {
     color: var(--text);
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     font-weight: 400;
-    transition: color 0.2s ease;
 }
 .text_label_ultrathin {
     color: var(--text);
-    font-size: 0.4rem;
+    font-size: 0.6rem;
     font-weight: 300;
-    transition: color 0.2s ease;
 }
 
-/*  Tags  */
-.lists {
-    display: flex;
-    gap: 0.4rem;
-    justify-items: center;
-    align-items: center;
-}
-.tag {
-    font-size: 0.7rem;
-    font-weight: 500;
-    padding: 0.4rem 0.7rem;
-
-    color: var(--text_tag);
-    background: color-mix(in srgb, var(--foreground) 60%, transparent);
-    border-radius: var(--radius);
-}
+/*  Text Color  */
+.textcolor     { color: var(--text); }
+.textcolor_tag { color: var(--text_tag); }

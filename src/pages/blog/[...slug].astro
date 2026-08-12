@@ -19,7 +19,7 @@ const { title, date, tags = [] } = post.data;
     <article class="markdown-body">
         <header class="post-meta">
             <h1 class="maintitle">{title}</h1>
-            <div class="lists">
+            <div class="lists_row">
                 {tags.map((tag) => <span class="tag">{tag}</span>)}
                 <div class="text_label">最后编辑于 {date.toLocaleDateString('en-CA')}</div>
             </div>
