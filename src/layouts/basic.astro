@@ -27,10 +27,12 @@ const {
         <section class="banner"></section>
         <main>
             <div class="container">
-                <div class="btn_label tag banner_detail">
-                    <a href="https://www.pixiv.net/artworks/106667556"
-                       title="在 Pixiv 中打开该作品">Kugigigi | ぼっち電車</a>
-                </div>
+                <a
+                    href="https://www.pixiv.net/artworks/106667556"
+                    title="Open this artwork on Pixiv"
+                    class="btn_label tag banner_detail">
+                    Kugigigi | ぼっち電車
+                </a>
                 <div class="grid_columns">
                     <div class="grid_rows">
                         <Profile/>
@@ -68,6 +70,7 @@ const {
         animation-range: 0vh 40vh;
 	}
     .banner_detail {
+        display: block;
         width: fit-content;
         margin-left: auto;
         
