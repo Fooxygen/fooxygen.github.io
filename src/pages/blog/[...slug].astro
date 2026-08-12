@@ -3,27 +3,27 @@ import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/basic.astro';
 
 export async function getStaticPaths() {
-    const posts = await getCollection('blog');
-    return posts.map((post) => ({
-        params: { slug: post.id },
-        props: { post },
+    const blogs = await getCollection('blogs');
+    return blogs.map((blog) => ({
+        params: { slug: blog.id },
+        props:  { blog },
     }));
 }
 
-const { post } = Astro.props;
-const { Content } = await render(post);
-const { title, date, tags = [] } = post.data;
+const { blog } = Astro.props;
+const { Content } = await render(blog);
+const { title, date, tags = [] } = blog.data;
 ---
 
 <Layout title={title}>
     <article class="markdown-body">
-        <header class="post-meta">
+        <header class="meta">
             <h1 class="maintitle">{title}</h1>
             <div class="lists_row">
                 {tags.map((tag) => <span class="tag">{tag}</span>)}
                 <div class="text_label">最后编辑于 {date.toLocaleDateString('en-CA')}</div>
             </div>
         </header>
-        <Content />
+        <Content/>
     </article>
 </Layout>

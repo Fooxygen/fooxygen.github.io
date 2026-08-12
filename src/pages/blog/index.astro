@@ -2,33 +2,33 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/basic.astro';
 
-const posts = (await getCollection('blog'))
+const blogs = (await getCollection('blogs'))
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
-<Layout title="Blog">
+<Layout title="Blogs">
 <blogs>
     <div class="lists_column">
-        {posts.map((post) => (
-            <a class="card" href={`/blog/${post.id}/`}>
-                <maintitle>{post.data.title}</maintitle>
+        {blogs.map((blog) => (
+            <a class="card" href={`/blog/${blog.id}/`}>
+                <maintitle>{blog.data.title}</maintitle>
                 <div class="lists_row">
                     <span class="text_label_thin textcolor_tag">
-                        {post.data.date.toLocaleDateString('en-CA')
+                        {blog.data.date.toLocaleDateString('en-CA')
                     }</span>
-                    {(post.data.tags ?? []).map((tag) => <span class="tag">{tag}</span>)}
+                    {(blog.data.tags ?? []).map((tag) => <span class="tag">{tag}</span>)}
                 </div>
             </a>
         ))}
     </div>
 
-    {posts.length > 0 && (
+    {blogs.length > 0 && (
         <nav class="lists_row">
-            <button class="btn_circle" data-page="first">⯇⯇</button>
-            <button class="btn_circle" data-page="prev">⯇</button>
+            <button class="btn_circle" data-page="first">«</button>
+            <button class="btn_circle" data-page="prev">‹</button>
             <div    class="lists_row" id="page_idxs"></div>
-            <button class="btn_circle" data-page="next">⯈</button>
-            <button class="btn_circle" data-page="last">⯈⯈</button>
+            <button class="btn_circle" data-page="next">›</button>
+            <button class="btn_circle" data-page="last">»</button>
         </nav>
     )}
 </blogs>

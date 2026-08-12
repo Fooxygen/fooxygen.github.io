@@ -162,12 +162,12 @@
 /* Collapsible details */
 .markdown-body details summary { cursor: pointer; }
 
-/* Post meta */
-.post-meta {
+/* Meta */
+.meta {
     padding-bottom: 1rem;
     border-bottom: 1px solid #3d444db3;
 }
-.post-meta .maintitle {
+.meta .maintitle {
     display: block;
     border-bottom: none;
 }
