@@ -20,8 +20,8 @@ const { title, date, tags = [] } = blog.data;
         <header class="meta">
             <h1 class="maintitle">{title}</h1>
             <div class="lists_row infos">
-                {tags.map((tag) => <span class="tag">{tag}</span>)}
                 <div class="text_label">最后编辑于 {date.toLocaleDateString('en-CA')}</div>
+                {tags.map((tag) => <span class="tag">{tag}</span>)}
             </div>
         </header>
         <Content/>

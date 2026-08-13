@@ -8,11 +8,11 @@ const blogs = (await getCollection('blogs'))
 
 <Layout title="Blogs">
 <blogs>
-    <div class="lists_column">
+    <div class="lists_column brace">
         {blogs.map((blog) => (
             <a class="card" href={`/blogs/${blog.id}/`}>
                 <maintitle>{blog.data.title}</maintitle>
-                <div class="lists_row">
+                <div class="lists_row brace">
                     <span class="text_label_thin textcolor_tag">
                         {blog.data.date.toLocaleDateString('en-CA')
                     }</span>
@@ -78,6 +78,7 @@ const blogs = (await getCollection('blogs'))
 
 <style>
     blogs {
+        width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -86,11 +87,13 @@ const blogs = (await getCollection('blogs'))
     }
 
     .card {
+        width: 100%;
         display: block;
         padding: 1.2rem;
         background: var(--foreground);
         border-radius: var(--radius);
         border: 1px solid transparent;
+        
         transition: border-color 0.2s ease;
     }
     .card:hover { border-color: var(--brand); }

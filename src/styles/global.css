@@ -45,18 +45,21 @@ body {
 }
 
 /*  Grid  */
+.brace {
+    width: 100%;
+}
+
 .lists_row {
     display: flex;
     flex-direction: row;
     gap: 0.6rem;
-    justify-items: center;
     align-items: center;
+    flex-wrap: wrap;
 }
 .lists_column {
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
-    justify-items: center;
     align-items: center;
 }
 
@@ -68,6 +71,7 @@ body {
     color: var(--text_tag);
     background: color-mix(in srgb, var(--foreground) 60%, transparent);
     border-radius: var(--radius);
+    border: 0.5px solid rgb(36, 50, 62);
     box-shadow: 0 6px 6px rgba(36, 50, 62, 0.4);
 }
 
