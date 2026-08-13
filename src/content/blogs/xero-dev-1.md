@@ -87,4 +87,13 @@ AI 主要承担这几个任务：
 
 如果你想了解更多实现细节，欢迎到文首的 Github 存储库链接查看源代码和 Wiki。
 
+## 演示截图
+![](./demo0.png)
+<figure><figcaption>语法演示</figcaption></figure>
+
+![](./demo1.png)
+<figure><figcaption>Debug 的 Token 流与 Ast 输出</figcaption></figure>
+
 ## 该文章的其它发布链接
+
+- [哔哩哔哩](https://www.bilibili.com/opus/1235956880478568453)

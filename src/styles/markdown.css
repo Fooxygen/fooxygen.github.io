@@ -127,7 +127,11 @@
 }
 
 /* Images */
-.markdown-body img { max-width: 100%; box-sizing: content-box; }
+.markdown-body img {
+    max-width: 100%;
+    height: auto;
+    box-sizing: content-box;
+}
 
 /* Footnotes */
 .markdown-body .footnotes {
@@ -177,6 +181,22 @@
 
 /* Collapsible details */
 .markdown-body details summary { cursor: pointer; }
+
+/*  Figure  */
+.markdown-body figure {
+    margin: 1.5rem auto;
+    text-align: center;
+}
+.markdown-body figure img {
+    display: block;
+    margin: 0 auto;
+}
+.markdown-body figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.85em;
+    color: var(--text_tag);
+    text-align: center;
+}
 
 /* Meta */
 .meta {
