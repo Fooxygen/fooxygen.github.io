@@ -39,7 +39,7 @@ a, a:link, a:visited, a:hover, a:active {
     text-decoration: none;
 }
 
-body {
+html, body {
     margin: 0;
     background: var(--background);
 }
