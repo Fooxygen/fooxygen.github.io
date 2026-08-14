@@ -85,9 +85,28 @@ AI 主要承担这几个任务：
 
 第一个正式版仍处于 Beta 阶段，且开发至今仅 50 多天。目前的计划虽然是继续走 Ast 解释器路线，实现更多特性，但正在逐步搭建出适配 LLVM 的架构，最终进化为编译器。
 
-如果你想了解更多实现细节，欢迎到文首的 Github 存储库链接查看源代码和 Wiki。
+如果你想了解**更多语法与实现细节**，欢迎到文首的 Github 存储库链接查看**源代码和 Wiki**。😉🥰
 
-## 演示截图
+## 演示
+
+```
+r: i32 = 3;
+
+for (x in -r..=r) {
+    s: i32 = r - abs(x);
+    
+    for (y in 0..s) print(' ');
+    print('O');
+
+    if (x != 0) {
+        for (y in 0..(2 * r + 1 - 2 * s - 2)) print(' ');
+        print('O');
+    }
+
+    print('\n');
+}
+```
+
 ![](./demo0.png)
 <figure><figcaption>语法演示</figcaption></figure>
 
@@ -97,3 +116,4 @@ AI 主要承担这几个任务：
 ## 该文章的其它发布链接
 
 - [哔哩哔哩](https://www.bilibili.com/opus/1235956880478568453)
+- [知乎](https://zhuanlan.zhihu.com/p/2071649346764943471)
