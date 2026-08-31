@@ -107,10 +107,10 @@ for (x in -r..=r) {
 }
 ```
 
-![](./xero-diary-1/demo0.png)
+![](https://cdn.jsdelivr.net/gh/Fooxygen/fooxygen.github.io@main/src/content/blogs/xero-diary-1/demo0.png)
 <figure><figcaption>语法演示</figcaption></figure>
 
-![](./xero-diary-1/demo1.png)
+![](https://cdn.jsdelivr.net/gh/Fooxygen/fooxygen.github.io@main/src/content/blogs/xero-diary-1/demo1.png)
 <figure><figcaption>Debug 的 Token 流与 Ast 输出</figcaption></figure>
 
 ## 该文章的其它发布链接
