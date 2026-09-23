@@ -1,6 +1,6 @@
 ---
 title: "Xero Diary #3 | 从解释器到编译器的功能对齐"
-date: 2026-09-23
+date: 2026-09-24
 tags: [xero, compiler, programming-language, c/cpp]
 ---
 
@@ -182,9 +182,12 @@ FnImpl 分为 NativeFnImpl 和 LangFnImpl，它们都有各自的类型实现存
 
 ## 总结
 
+切换至 LLVM 框架后，表达指令方面上确实有更多复杂的实现，有时会觉得没有做解释器时大量创造新特性时那么快乐。
 
+Xero 架构演变的还算快，同时我也越来越发觉代码的更新未能与 Wiki 或 Diary 的更新速度有好的匹配。必须承认的是我暂时没有太多精力字斟句酌地修改 Wiki，大量借助了 AI 来帮忙生成。Diary 还写的可以，但 Wiki 要写出较好的水平，我还得多琢磨琢磨。 
+
+接下来慢慢可以恢复新功能开发了，从较为枯燥的一些方面上抽离出来做更有意思的部分。
 
 ## 该文章的其它发布链接
 
 - [知乎](https://zhuanlan.zhihu.com/p/2073726209909961968)
-- [哔哩哔哩](https://www.bilibili.com/opus/1238502954280943633)
