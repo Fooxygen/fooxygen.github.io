@@ -1,0 +1,307 @@
+---
+---
+
+<section class="wordmark" aria-label="FOOXYGEN">
+    <canvas id="wordmark-canvas" aria-hidden="true"></canvas>
+</section>
+
+<style>
+    .wordmark {
+        position: relative;
+        width: 100%;
+        height: 33.333vh;
+        margin-top: 2rem;
+        overflow: hidden;
+        background: var(--brand);
+    }
+
+    #wordmark-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<script>
+    (() => {
+        const section = document.querySelector<HTMLElement>(".wordmark");
+        const canvas = document.getElementById("wordmark-canvas") as HTMLCanvasElement | null;
+
+        if (!section || !canvas) {
+            return;
+        }
+
+        const ctx = canvas.getContext("2d", { alpha: false });
+        const textCanvas = document.createElement("canvas");
+        const textCtx = textCanvas.getContext("2d", { alpha: true });
+
+        if (!ctx || !textCtx) {
+            return;
+        }
+
+        const rootStyles = getComputedStyle(document.documentElement);
+        const TEXT = "FOOXYGEN";
+        const BACKGROUND = rootStyles.getPropertyValue("--brand").trim() || "#43b8fc";
+        const FOREGROUND = rootStyles.getPropertyValue("--background").trim() || "#090e13";
+        const FONT =
+            '900 {size}px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif';
+        const MOVING_WINDOW_MS = 90;
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        let width = 1;
+        let height = 1;
+        let dpr = 1;
+        let lastWidth = 0;
+        let lastHeight = 0;
+
+        let pointerX = -100000;
+        let pointerY = -100000;
+        let velocityX = 0;
+        let velocityY = 0;
+        let lastClientX: number | null = null;
+        let lastClientY: number | null = null;
+        let pointerActive = false;
+
+        let intensity = 0;
+        let lastMoveAt = 0;
+        let frame = 0;
+        let resizeTimer = 0;
+
+        function paintText() {
+            textCtx.clearRect(0, 0, width, height);
+            textCtx.fillStyle = FOREGROUND;
+            textCtx.textAlign = "center";
+            textCtx.textBaseline = "alphabetic";
+
+            let size = height;
+            textCtx.font = FONT.replace("{size}", String(size));
+
+            let metrics = textCtx.measureText(TEXT);
+            const glyphHeight =
+                (metrics.actualBoundingBoxAscent || 0) +
+                (metrics.actualBoundingBoxDescent || 0);
+
+            if (glyphHeight > 0) {
+                size *= (height * 0.94) / glyphHeight;
+            } else {
+                size = height * 0.82;
+            }
+            textCtx.font = FONT.replace("{size}", String(size));
+
+            metrics = textCtx.measureText(TEXT);
+            const maxWidth = width * 0.96;
+            if (metrics.width > maxWidth) {
+                size *= maxWidth / metrics.width;
+                textCtx.font = FONT.replace("{size}", String(size));
+                metrics = textCtx.measureText(TEXT);
+            }
+
+            const ascent = metrics.actualBoundingBoxAscent || 0;
+            const descent = metrics.actualBoundingBoxDescent || 0;
+            const baselineY = height / 2 + (ascent - descent) / 2;
+
+            textCtx.fillText(TEXT, width / 2, baselineY);
+        }
+
+        function clamp(value: number, min: number, max: number) {
+            return Math.max(min, Math.min(max, value));
+        }
+
+        function drawWarpedArea(rows: number, cols: number, halfWidth: number, halfHeight: number) {
+            const cellWidth = width / cols;
+            const cellHeight = height / rows;
+
+            const minCol = Math.max(0, Math.floor((pointerX - halfWidth) / cellWidth));
+            const maxCol = Math.min(cols - 1, Math.floor((pointerX + halfWidth) / cellWidth));
+            const minRow = Math.max(0, Math.floor((pointerY - halfHeight) / cellHeight));
+            const maxRow = Math.min(rows - 1, Math.floor((pointerY + halfHeight) / cellHeight));
+
+            const left = Math.floor(minCol * cellWidth);
+            const top = Math.floor(minRow * cellHeight);
+            const right = Math.floor((maxCol + 1) * cellWidth);
+            const bottom = Math.floor((maxRow + 1) * cellHeight);
+
+            ctx.fillStyle = BACKGROUND;
+            ctx.fillRect(left, top, right - left, bottom - top);
+
+            const maxShiftX = cellWidth * 15;
+            const maxShiftY = cellHeight * 20;
+
+            for (let row = minRow; row <= maxRow; row++) {
+                const y = Math.floor(row * cellHeight);
+                const yEnd = Math.floor((row + 1) * cellHeight);
+                const blockHeight = Math.max(1, yEnd - y);
+
+                for (let col = minCol; col <= maxCol; col++) {
+                    const x = Math.floor(col * cellWidth);
+                    const xEnd = Math.floor((col + 1) * cellWidth);
+                    const blockWidth = Math.max(1, xEnd - x);
+
+                    const centerX = x + blockWidth / 2;
+                    const centerY = y + blockHeight / 2;
+                    const normX = Math.abs(centerX - pointerX) / halfWidth;
+                    const normY = Math.abs(centerY - pointerY) / halfHeight;
+                    const falloff = Math.max(0, 1 - Math.max(normX, normY));
+
+                    let dx = 0;
+                    let dy = 0;
+
+                    if (falloff > 0 && intensity > 0.005) {
+                        const motionX = (velocityX + velocityY * 0.3) * 15;
+                        const motionY = (velocityY + velocityX * 0.3) * 20;
+
+                        dx =
+                            clamp(motionX * dpr * 1.4, -maxShiftX, maxShiftX) *
+                            falloff *
+                            intensity;
+                        dy =
+                            clamp(motionY * dpr * 1.4, -maxShiftY, maxShiftY) *
+                            falloff *
+                            intensity;
+                    }
+
+                    const sourceX = Math.max(
+                        0,
+                        Math.min(width - blockWidth, Math.round(x - dx))
+                    );
+                    const sourceY = Math.max(
+                        0,
+                        Math.min(height - blockHeight, Math.round(y + dy))
+                    );
+
+                    ctx.drawImage(
+                        textCanvas,
+                        sourceX,
+                        sourceY,
+                        blockWidth,
+                        blockHeight,
+                        x,
+                        y,
+                        blockWidth,
+                        blockHeight
+                    );
+                }
+            }
+        }
+
+        function draw(now: number) {
+            const moving = pointerActive && now - lastMoveAt < MOVING_WINDOW_MS;
+            const target = moving ? 1 : 0;
+            const easeIn = moving ? 0.4 : 0.018;
+            const drag = moving ? 0.9 : 0.97;
+
+            intensity += (target - intensity) * (reduceMotion ? 1 : easeIn);
+            velocityX *= drag;
+            velocityY *= drag;
+
+            ctx.fillStyle = BACKGROUND;
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(textCanvas, 0, 0);
+
+            if (!reduceMotion && intensity > 0.005) {
+                const rows = 8;
+                const cols = 16;
+                drawWarpedArea(rows, cols, width * 0.25, height * 0.25);
+            }
+
+            if (!reduceMotion && (moving || intensity > 0.01)) {
+                frame = requestAnimationFrame(draw);
+            } else {
+                frame = 0;
+            }
+        }
+
+        function start() {
+            if (!frame) {
+                frame = requestAnimationFrame(draw);
+            }
+        }
+
+        function resize() {
+            const rect = section.getBoundingClientRect();
+            if (Math.abs(rect.width - lastWidth) < 0.5 && Math.abs(rect.height - lastHeight) < 0.5) {
+                return;
+            }
+            lastWidth = rect.width;
+            lastHeight = rect.height;
+
+            dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+            width = Math.min(2560, Math.max(1, Math.round(rect.width * dpr)));
+            height = Math.min(720, Math.max(1, Math.round(rect.height * dpr)));
+
+            canvas.width = width;
+            canvas.height = height;
+            textCanvas.width = width;
+            textCanvas.height = height;
+
+            paintText();
+
+            if (frame) {
+                cancelAnimationFrame(frame);
+                frame = 0;
+            }
+            draw(performance.now());
+        }
+
+        function movePointer(clientX: number, clientY: number) {
+            const rect = section.getBoundingClientRect();
+            pointerX = (clientX - rect.left) * dpr;
+            pointerY = (clientY - rect.top) * dpr;
+
+            if (lastClientX !== null && lastClientY !== null) {
+                velocityX = velocityX * 0.6 + (clientX - lastClientX) * 0.4;
+                velocityY = velocityY * 0.6 + (clientY - lastClientY) * 0.4;
+            }
+
+            lastClientX = clientX;
+            lastClientY = clientY;
+            lastMoveAt = performance.now();
+            pointerActive = true;
+            start();
+        }
+
+        section.addEventListener("pointermove", (event) => {
+            movePointer(event.clientX, event.clientY);
+        });
+
+        section.addEventListener("pointerleave", () => {
+            pointerActive = false;
+            velocityX = 0;
+            velocityY = 0;
+            lastClientX = null;
+            lastClientY = null;
+            start();
+        });
+
+        section.addEventListener("pointercancel", () => {
+            pointerActive = false;
+            velocityX = 0;
+            velocityY = 0;
+            lastClientX = null;
+            lastClientY = null;
+            start();
+        });
+
+        section.addEventListener(
+            "wheel",
+            (event) => {
+                const rect = section.getBoundingClientRect();
+                pointerX = (event.clientX - rect.left) * dpr;
+                pointerY = (event.clientY - rect.top) * dpr;
+                velocityX += event.deltaX * 0.08;
+                velocityY += event.deltaY * 0.08;
+                lastMoveAt = performance.now();
+                pointerActive = true;
+                start();
+            },
+            { passive: true }
+        );
+
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = window.setTimeout(resize, 150);
+        });
+
+        resize();
+    })();
+</script>
