@@ -1,18 +1,25 @@
 ---
 ---
 
-<section class="wordmark" aria-label="FOOXYGEN">
+<section class="wordmark" aria-label="Foxygen">
     <canvas id="wordmark-canvas" aria-hidden="true"></canvas>
 </section>
 
 <style>
+    @font-face {
+        font-family: "Geom";
+        src: url("../assets/fonts/geom/Geom-VariableFont_wght.ttf") format("truetype");
+        font-weight: 300 900;
+        font-style: normal;
+        font-display: swap;
+    }
+
     .wordmark {
         position: relative;
-        width: 100%;
-        height: 33.333vh;
-        margin-top: 2rem;
+        width: var(--content_width);
+        margin: 2rem auto 0;
         overflow: hidden;
-        background: var(--brand);
+        background: var(--background);
     }
 
     #wordmark-canvas {
@@ -40,12 +47,15 @@
         }
 
         const rootStyles = getComputedStyle(document.documentElement);
-        const TEXT = "FOOXYGEN";
-        const BACKGROUND = rootStyles.getPropertyValue("--brand").trim() || "#43b8fc";
-        const FOREGROUND = rootStyles.getPropertyValue("--background").trim() || "#090e13";
+        const TEXT = "Foxygen";
+        const BACKGROUND = rootStyles.getPropertyValue("--background").trim() || "#090e13";
+        const FOREGROUND = rootStyles.getPropertyValue("--text").trim() || "#f0f6fc";
         const FONT =
-            '900 {size}px -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif';
+            '700 {size}px "Geom", -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif';
         const MOVING_WINDOW_MS = 90;
+        const TEXT_WIDTH_FILL = 1;
+        const TEXT_HEIGHT_FILL = 0.94;
+        const BASE_SIZE = 100;
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
         let width = 1;
@@ -70,37 +80,35 @@
         function paintText() {
             textCtx.clearRect(0, 0, width, height);
             textCtx.fillStyle = FOREGROUND;
-            textCtx.textAlign = "center";
+            textCtx.textAlign = "left";
             textCtx.textBaseline = "alphabetic";
 
-            let size = height;
-            textCtx.font = FONT.replace("{size}", String(size));
+            textCtx.font = FONT.replace("{size}", String(BASE_SIZE));
+            const base = textCtx.measureText(TEXT);
+            const baseInkWidth =
+                (base.actualBoundingBoxLeft || 0) +
+                (base.actualBoundingBoxRight || 0) || 1;
+            const baseGlyphHeight =
+                (base.actualBoundingBoxAscent || 0) +
+                (base.actualBoundingBoxDescent || 0) || BASE_SIZE;
 
-            let metrics = textCtx.measureText(TEXT);
-            const glyphHeight =
-                (metrics.actualBoundingBoxAscent || 0) +
-                (metrics.actualBoundingBoxDescent || 0);
+            let size = BASE_SIZE * ((width * TEXT_WIDTH_FILL) / baseInkWidth);
 
-            if (glyphHeight > 0) {
-                size *= (height * 0.94) / glyphHeight;
-            } else {
-                size = height * 0.82;
+            const glyphHeight = (baseGlyphHeight * size) / BASE_SIZE;
+            const maxHeight = height * TEXT_HEIGHT_FILL;
+            if (glyphHeight > maxHeight) {
+                size *= maxHeight / glyphHeight;
             }
-            textCtx.font = FONT.replace("{size}", String(size));
 
-            metrics = textCtx.measureText(TEXT);
-            const maxWidth = width * 0.96;
-            if (metrics.width > maxWidth) {
-                size *= maxWidth / metrics.width;
-                textCtx.font = FONT.replace("{size}", String(size));
-                metrics = textCtx.measureText(TEXT);
-            }
+            textCtx.font = FONT.replace("{size}", String(size));
+            const metrics = textCtx.measureText(TEXT);
 
             const ascent = metrics.actualBoundingBoxAscent || 0;
             const descent = metrics.actualBoundingBoxDescent || 0;
             const baselineY = height / 2 + (ascent - descent) / 2;
 
-            textCtx.fillText(TEXT, width / 2, baselineY);
+            const x = metrics.actualBoundingBoxLeft || 0;
+            textCtx.fillText(TEXT, x, baselineY);
         }
 
         function clamp(value: number, min: number, max: number) {
@@ -217,17 +225,40 @@
             }
         }
 
+        function measureText(size: number) {
+            textCtx.font = FONT.replace("{size}", String(size));
+            return textCtx.measureText(TEXT);
+        }
+
         function resize() {
-            const rect = section.getBoundingClientRect();
-            if (Math.abs(rect.width - lastWidth) < 0.5 && Math.abs(rect.height - lastHeight) < 0.5) {
+            const cssWidth = section.clientWidth;
+            if (cssWidth <= 0) {
                 return;
             }
-            lastWidth = rect.width;
-            lastHeight = rect.height;
+
+            const base = measureText(BASE_SIZE);
+            const baseInkWidth =
+                (base.actualBoundingBoxLeft || 0) +
+                (base.actualBoundingBoxRight || 0) || 1;
+            const baseGlyphHeight =
+                (base.actualBoundingBoxAscent || 0) +
+                (base.actualBoundingBoxDescent || 0) || BASE_SIZE;
+
+            const size = BASE_SIZE * ((cssWidth * TEXT_WIDTH_FILL) / baseInkWidth);
+            const glyphHeight = (baseGlyphHeight * size) / BASE_SIZE;
+            const cssHeight = Math.ceil(glyphHeight / TEXT_HEIGHT_FILL);
+
+            if (Math.abs(cssWidth - lastWidth) < 0.5 && Math.abs(cssHeight - lastHeight) < 0.5) {
+                return;
+            }
+            lastWidth = cssWidth;
+            lastHeight = cssHeight;
+
+            section.style.height = `${cssHeight}px`;
 
             dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-            width = Math.min(2560, Math.max(1, Math.round(rect.width * dpr)));
-            height = Math.min(720, Math.max(1, Math.round(rect.height * dpr)));
+            width = Math.max(1, Math.round(cssWidth * dpr));
+            height = Math.max(1, Math.round(cssHeight * dpr));
 
             canvas.width = width;
             canvas.height = height;
@@ -302,6 +333,18 @@
             resizeTimer = window.setTimeout(resize, 150);
         });
 
+        async function ensureFont() {
+            try {
+                await document.fonts.load('700 100px "Geom"');
+            } catch {
+                // Fall back to the system font stack if the webfont cannot load.
+            }
+            lastWidth = 0;
+            lastHeight = 0;
+            resize();
+        }
+
         resize();
+        void ensureFont();
     })();
 </script>
